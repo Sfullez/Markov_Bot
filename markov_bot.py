@@ -3,8 +3,9 @@ import os.path, pickle, hashlib, logging, time, sys, traceback, random, unicoded
 # minimal Telegram bot library
 SENT = False
 
-T = "BOT_TOKEN_GOES_HERE"
-UA = "A_BROWSER_USER_AGENT_GOES_HERE"
+abs_path = os.path.dirname(os.path.abspath(__file__))
+T = "YOUR_BOT_TOKEN_GOES_HERE"
+UA = "A_BROWSER_AGENT_GOES_HERE"
 custom_urlopen = lambda u,**kw:urllib.request.urlopen(urllib.request.Request(u, headers={'User-Agent': UA}),**kw)
 class TelegramBot():
     class attribute_dict():
@@ -183,7 +184,7 @@ def limit(s):
 def load_group(chat_id):
     global gcache
     try:
-        with open("markov/chat_" + str(chat_id) + ".dat", "rb") as f:
+        with open(os.path.join(abs_path, "chat_" + str(chat_id) + ".dat"), "rb") as f:
             groups[chat_id] = pickle.load(f)
         gcache.append(chat_id)
     except KeyboardInterrupt as e:
@@ -200,7 +201,7 @@ def check_cache():
 def unload_group(chat_id):
     global gcache, gc_counter
     try:
-        with open("markov/chat_" + str(chat_id) + ".dat", "wb") as f:
+        with open(os.path.join(abs_path, "chat_" + str(chat_id) + ".dat"), "wb") as f:
             pickle.dump(groups[chat_id], f)
             groups[chat_id] = None
             del groups[chat_id]
@@ -216,7 +217,7 @@ def unload_group(chat_id):
 
 def save_group(chat_id):
     try:
-        with open("markov/chat_" + str(chat_id) + ".dat", "wb") as f:
+        with open(os.path.join(abs_path, "chat_" + str(chat_id) + ".dat"), "wb") as f:
             pickle.dump(groups[chat_id], f)
     except:
         pass
@@ -281,7 +282,7 @@ try:
                     unload_group(oid)
                 # rename db file
                 try:
-                    os.rename("markov/chat_" + str(oid) + ".dat", "markov/chat_" + str(nid) + ".dat")
+                    os.rename(os.path.join(abs_path, "chat_" + str(oid) + ".dat"), os.path.join(abs_path, "chat_" + str(nid) + ".dat"))
                 except: # file does not exist, ignore
                     pass    
                 continue
